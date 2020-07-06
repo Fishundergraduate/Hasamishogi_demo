@@ -62,8 +62,13 @@ public class MainActivity extends Mystate{
 
                 case global_variant.Player2:
                     System.out.println("Player" + nowPlayer + "さんの手番です．");
-                    //mystate.printBoard(mystate.board);     
-                    int[] solve = DFS.main(mystate.board,mystate.pieces);
+                    //mystate.printBoard(mystate.board);   
+                    int[][] board_tmp = mystate.board; 
+                    int[] solve = DFS.main(board_tmp,mystate.pieces);
+                    for (int i : solve) {
+                        System.out.print(i+1+"\t");
+                    }
+                    System.out.println("");
                     methods.movePiece(nowPlayer,mystate.board, solve[0],solve[1] , solve[2], solve[3]) ;//movePiece(int player, int[][] board,int x_1, int y_1,int x_2 , int y_2)
     
                     //mystate.printBoard(mystate.board);

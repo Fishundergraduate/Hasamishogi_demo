@@ -19,7 +19,7 @@ public class DFS {
         stack.push(root);
         for (int i =0;!stack.isEmpty() ;i++) {
             TreeNode node = stack.pop();
-            if (node.val > max.val ) {
+            if (node.val >= max.val ) {
                 max = node;
             }
             giveNode_Player(node.treenode_depth%2 +1, root, node.board, node.pieces);
@@ -30,9 +30,9 @@ public class DFS {
                 stack.push(node.left);
             }
         }
-        System.out.println(max.treenode_depth);
         while(max.treenode_depth > 1) 
         {
+            System.out.println(max.treenode_depth);
             max = max.parent;
         }
         return max;
@@ -176,6 +176,7 @@ public class DFS {
 
 public  static void giveNode_Player2(TreeNode root, int[][] board,int[] pieces){
     Methods methods = new Methods();
+    int[][] board_cp = board;
     //methods.printBoard(board);
     
     ArrayList<int[]> mypieceList = methods.searchPieces(global_variant.Player2, board);
@@ -185,7 +186,7 @@ public  static void giveNode_Player2(TreeNode root, int[][] board,int[] pieces){
 
     Random random = new Random();
     int index = random.nextInt(mypieceList.size());
-    for (int i = 0; i < otherpieceList.size(); i++) {
+    for (int i = 0; i < otherpieceList.size(); i++,board = board_cp) {
         if (Math.abs(mypieceList.get(index)[0] - otherpieceList.get(i)[0]) <= 1) {
             if (methods.checkPosition(global_variant.Player2, mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1], board) & checker1) {
                 methods.movePiece(global_variant.Player2, board, mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1]);
@@ -196,8 +197,8 @@ public  static void giveNode_Player2(TreeNode root, int[][] board,int[] pieces){
             }
             
         }
-        if (Math.abs(mypieceList.get(index)[1] - otherpieceList.get(i)[1]) == 1  & checker2) {
-            if (methods.checkPosition(global_variant.Player2, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1], board)) {
+        if (Math.abs(mypieceList.get(index)[1] - otherpieceList.get(i)[1]) == 1  ) {
+            if (methods.checkPosition(global_variant.Player2, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1], board)& checker2) {
                 methods.movePiece(global_variant.Player2, board, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1]);
                 //methods.printBoard(board);
                 System.out.println(pieces);
@@ -235,8 +236,8 @@ public  static void giveNode_Player1(TreeNode root, int[][] board,int[] pieces){
             }
             
         }
-        if (Math.abs(mypieceList.get(index)[1] - otherpieceList.get(i)[1]) == 1  & checker2) {
-            if (methods.checkPosition(global_variant.Player1, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1], board)) {
+        if (Math.abs(mypieceList.get(index)[1] - otherpieceList.get(i)[1]) == 1 ) {
+            if (methods.checkPosition(global_variant.Player1, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1], board) & checker2) {
                 methods.movePiece(global_variant.Player1, board, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1]);
                 pieces[global_variant.Player2 -1] = methods.pieceOnBoard(global_variant.Player2, board);
                 pieces[global_variant.Player1-1] = methods.pieceOnBoard(global_variant.Player1, board);
