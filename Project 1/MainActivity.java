@@ -7,6 +7,7 @@ class global_variant {
     final static int Player2 = 2;
     static String[] yoko_number = {"１","２","３","４","５","６","７","８","９"};
     static String[] tate_number = {"一","二","三","四","五","六","七","八","九"};
+    final static int depth =5;
     
 }
 
@@ -61,7 +62,7 @@ public class MainActivity extends Mystate{
 
                 case global_variant.Player2:
                     System.out.println("Player" + nowPlayer + "さんの手番です．");
-                    mystate.printBoard(mystate.board);     
+                    //mystate.printBoard(mystate.board);     
                     int[] solve = DFS.main(mystate.board,mystate.pieces);
                     methods.movePiece(nowPlayer,mystate.board, solve[0],solve[1] , solve[2], solve[3]) ;//movePiece(int player, int[][] board,int x_1, int y_1,int x_2 , int y_2)
     
@@ -181,7 +182,7 @@ class Methods {
             x_1 = scan.nextInt() ;
             y_1 = scan.nextInt()  ;
             String strtmp = scan.nextLine();
-            isOK = checkRange(player, x_1 - 1, y_1 - 1, board); // 0 origin
+            isOK = methods.checkRange(player, x_1 - 1, y_1 - 1, board); // 0 origin
             if (!isOK) {
                 System.out.println("ERROR! Pair of " + x_1 + "," + y_1 + " is invalid.");
             } else {
@@ -253,7 +254,7 @@ class Methods {
     }
 
     // check Position
-    static Boolean checkRange(int player, int x, int y, int[][] board) {
+    Boolean checkRange(int player, int x, int y, int[][] board) {
         if (x < 0 || 9 <= x || y < 0 || 9 <= y) {
             System.out.println("Out of Range");
             return false;
