@@ -16,19 +16,51 @@ public class DFS {
         }
         Deque<TreeNode> stack = new ArrayDeque<>();
         TreeNode max = root;
-        stack.push(root);
-        for (int i =0;!stack.isEmpty() ;i++) {
+        stack.addFirst(root);
+        for (int i =0;!stack.isEmpty()|| i == 0 ;i++) {
+            System.out.println("time:"+i);
             TreeNode node = stack.pop();
             if (node.val >= max.val ) {
                 max = node;
             }
-            giveNode_Player(node.treenode_depth%2 +1, root, node.board, node.pieces);
+            giveNode_Player(node.treenode_depth%2+1, node, node.board, node.pieces);
             if (node.right != null) {
-                stack.push(node.right);
+                stack.addFirst(node.right);
             }
             if (node.left != null) {
-                stack.push(node.left);
+                stack.addFirst(node.left);
             }
+        }
+        while(max.treenode_depth > 1) 
+        {
+            System.out.println(max.treenode_depth);
+            max = max.parent;
+        }
+        return max;
+    }static public TreeNode execBfs(TreeNode root) {
+        if (root == null) {
+            throw new IllegalArgumentException("Nothing to print because input tree is null.");
+        }
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        TreeNode max = root;
+        stack.addFirst(root);
+        for (int i =0;!stack.isEmpty() ;i++) {
+            System.out.println("time:"+i);
+            TreeNode node = stack.pop();
+            if (true/*node.val >= max.val*/ ) {
+                max = node;
+            }
+            giveNode_Player(node.treenode_depth%2+1, node, node.board, node.pieces);
+            
+            if (i>0) {
+                if (node == node.parent.left) {
+                    stack.addFirst(node.right);
+                }
+                if (node == node.parent.right) {
+                    stack.push(node.parent.left.left);
+                }                
+            }
+            
         }
         while(max.treenode_depth > 1) 
         {
@@ -81,22 +113,25 @@ public class DFS {
         }
     }
 
-    public static int[] main(int[][] board, int[] pieces) {
-        
+    public static int[] main(final int[] pieces) {
+        final int[][] board = global_variant.board;
         TreeNode root = new TreeNode(pieces,board);
         root.parent = new TreeNode(-130);
 
         giveNode_Player2(root,root.board,root.pieces);
 
-        TreeNode ans = execDfs(root);
+        TreeNode ans = execBfs(root);
         System.out.println(ans.treenode_depth);
-        System.out.println(ans.parent.val);
 
+        
+       if (ans.treenode_depth <= 0) {
+           
+        Methods methods = new Methods();
+        ArrayList<int[]> mypieceList = methods.searchPieces(global_variant.Player2,board);
+       
 
         while(ans.treenode_depth <= 0){
             System.out.println("In");
-            Methods methods = new Methods();
-            ArrayList<int[]> mypieceList = methods.searchPieces(global_variant.Player2, board);
             Boolean checker1 = true;
             Random random = new Random();
             while (checker1) {
@@ -152,6 +187,7 @@ public class DFS {
             }
                  
         } 
+        }
 
         
         

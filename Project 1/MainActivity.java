@@ -8,6 +8,7 @@ class global_variant {
     static String[] yoko_number = {"１","２","３","４","５","６","７","８","９"};
     static String[] tate_number = {"一","二","三","四","五","六","七","八","九"};
     final static int depth =5;
+    static int[][] board;
     
 }
 
@@ -63,8 +64,8 @@ public class MainActivity extends Mystate{
                 case global_variant.Player2:
                     System.out.println("Player" + nowPlayer + "さんの手番です．");
                     //mystate.printBoard(mystate.board);   
-                    int[][] board_tmp = mystate.board; 
-                    int[] solve = DFS.main(board_tmp,mystate.pieces);
+                    global_variant.board = mystate.board; 
+                    int[] solve = DFS.main(mystate.pieces);
                     for (int i : solve) {
                         System.out.print(i+1+"\t");
                     }
