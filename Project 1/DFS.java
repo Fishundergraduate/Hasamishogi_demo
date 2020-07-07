@@ -2,73 +2,14 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
 
-import jdk.nashorn.api.tree.Tree;
+//import jdk.nashorn.api.tree.Tree;
+//import sun.tools.tree.ThrowStatement;
 
 import java.util.ArrayList;
 
 
 
 public class DFS {
-
-    static public TreeNode execDfs(TreeNode root) {
-        if (root == null) {
-            throw new IllegalArgumentException("Nothing to print because input tree is null.");
-        }
-        Deque<TreeNode> stack = new ArrayDeque<>();
-        TreeNode max = root;
-        stack.addFirst(root);
-        for (int i =0;!stack.isEmpty()|| i == 0 ;i++) {
-            System.out.println("time:"+i);
-            TreeNode node = stack.pop();
-            if (node.val >= max.val ) {
-                max = node;
-            }
-            giveNode_Player(node.treenode_depth%2+1, node, node.board, node.pieces);
-            if (node.right != null) {
-                stack.addFirst(node.right);
-            }
-            if (node.left != null) {
-                stack.addFirst(node.left);
-            }
-        }
-        while(max.treenode_depth > 1) 
-        {
-            System.out.println(max.treenode_depth);
-            max = max.parent;
-        }
-        return max;
-    }static public TreeNode execBfs(TreeNode root) {
-        if (root == null) {
-            throw new IllegalArgumentException("Nothing to print because input tree is null.");
-        }
-        Deque<TreeNode> stack = new ArrayDeque<>();
-        TreeNode max = root;
-        stack.addFirst(root);
-        for (int i =0;!stack.isEmpty() ;i++) {
-            System.out.println("time:"+i);
-            TreeNode node = stack.pop();
-            if (true/*node.val >= max.val*/ ) {
-                max = node;
-            }
-            giveNode_Player(node.treenode_depth%2+1, node, node.board, node.pieces);
-            
-            if (i>0) {
-                if (node == node.parent.left) {
-                    stack.addFirst(node.right);
-                }
-                if (node == node.parent.right) {
-                    stack.push(node.parent.left.left);
-                }                
-            }
-            
-        }
-        while(max.treenode_depth > 1) 
-        {
-            System.out.println(max.treenode_depth);
-            max = max.parent;
-        }
-        return max;
-    }
 
     private static class TreeNode {
         int val = -1;
@@ -80,8 +21,7 @@ public class DFS {
         int[] pieces;
         int treenode_depth = 0;
         TreeNode parent;
-        TreeNode left;
-        TreeNode right;
+        ArrayList<TreeNode> child = new ArrayList<TreeNode>();
         TreeNode(int x) { 
             val = x; 
             treenode_depth = -1;
@@ -120,7 +60,7 @@ public class DFS {
 
         giveNode_Player2(root,root.board,root.pieces);
 
-        TreeNode ans = execBfs(root);
+        TreeNode ans = execDfs(root);
         System.out.println(ans.treenode_depth);
 
         
@@ -196,96 +136,180 @@ public class DFS {
         return solve;
     }
 
-    public static void giveNode_Player(int num,TreeNode root, int[][] board,int[] pieces) {
+    public static ArrayList<TreeNode> giveNode_Player(int num,TreeNode root, int[][] board,int[] pieces) {
         switch (num) {
             case 1:
-                giveNode_Player1(root, board, pieces);
-                break;
+                return giveNode_Player1(root, board, pieces);
+                //break;
             case 2:
-                giveNode_Player2(root, board, pieces);
-                break;
+                return giveNode_Player2(root, board, pieces);
+                //break;
             default:
-                break;
+                ArrayList<TreeNode> solve = new ArrayList<TreeNode>();
+                solve.add(new TreeNode(-130));
+                return solve;
+                //break;
         }
     }
 
 
-public  static void giveNode_Player2(TreeNode root, int[][] board,int[] pieces){
+public  static ArrayList<TreeNode> giveNode_Player2(TreeNode root, int[][] board,int[] pieces){
     Methods methods = new Methods();
-    int[][] board_cp = board;
+    final int[][] board_cp = board;
+    int[][] tmp;
     //methods.printBoard(board);
     
     ArrayList<int[]> mypieceList = methods.searchPieces(global_variant.Player2, board);
     ArrayList<int[]> otherpieceList = methods.searchPieces(global_variant.Player1, board);
+    ArrayList<TreeNode> solveList = new ArrayList<TreeNode>();
     Boolean checker1 = true;
     Boolean checker2 = true;
 
-    Random random = new Random();
-    int index = random.nextInt(mypieceList.size());
-    for (int i = 0; i < otherpieceList.size(); i++,board = board_cp) {
+    //Random random = new Random();
+    //int index = random.nextInt(mypieceList.size());
+    for (int j = 0; j < mypieceList.size(); j++,board = board_cp) {
+    int    index = j;
+        
+    
+    for (int i = 0; i < otherpieceList.size(); i++,board = board_cp) {/* todo cheker1 ,2の挙動はどうする？ */
         if (Math.abs(mypieceList.get(index)[0] - otherpieceList.get(i)[0]) <= 1) {
             if (methods.checkPosition(global_variant.Player2, mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1], board) & checker1) {
-                methods.movePiece(global_variant.Player2, board, mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1]);
+                tmp = methods.movePiece(global_variant.Player2, board, mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1]);
+                board = tmp;
                 pieces[global_variant.Player1 -1] = methods.pieceOnBoard(global_variant.Player1, board);
                 pieces[global_variant.Player2-1] = methods.pieceOnBoard(global_variant.Player2, board);
-                root.left = new TreeNode(pieces,mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1],board,root);
+                solveList.add(new TreeNode(pieces,mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1],board,root));
                 checker1 = false;
+                board = board_cp;
             }
             
         }
         if (Math.abs(mypieceList.get(index)[1] - otherpieceList.get(i)[1]) == 1  ) {
             if (methods.checkPosition(global_variant.Player2, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1], board)& checker2) {
-                methods.movePiece(global_variant.Player2, board, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1]);
+                tmp = methods.movePiece(global_variant.Player2, board, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1]);
+                board = tmp;
                 //methods.printBoard(board);
-                System.out.println(pieces);
+                //System.out.println(pieces);
                 pieces[global_variant.Player1 -1] = methods.pieceOnBoard(global_variant.Player1, board);
                 pieces[global_variant.Player2-1] = methods.pieceOnBoard(global_variant.Player2, board);
-                root.right = new TreeNode(pieces,mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1],board,root);
+                solveList.add(new TreeNode(pieces,mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1],board,root));
                 checker2 = false;
+                board = board_cp;
             }
         }
         if (checker1 == false & checker2 == false) {
             break;
         }
     }
+}
+return solveList;
     //a
     
 }
-public  static void giveNode_Player1(TreeNode root, int[][] board,int[] pieces){
+public  static ArrayList<TreeNode> giveNode_Player1(TreeNode root, int[][] board,int[] pieces){
     Methods methods = new Methods();
     
     ArrayList<int[]> mypieceList = methods.searchPieces(global_variant.Player1, board);
     ArrayList<int[]> otherpieceList = methods.searchPieces(global_variant.Player2, board);
     Boolean checker1 = true;
     Boolean checker2 = true;
+    ArrayList<TreeNode> solveList = new ArrayList<TreeNode>();
+    int[][] tmp;
+    final int[][] board_cp = board;
 
-    Random random = new Random();
-    int index = random.nextInt(mypieceList.size());
-    for (int i = 0; i < otherpieceList.size(); i++) {
+    //Random random = new Random();
+    //int index = random.nextInt(mypieceList.size());
+    for (int j = 0; j < mypieceList.size(); j++,board = board_cp) {
+        int index = j;
+    
+    for (int i = 0; i < otherpieceList.size(); i++,board = board_cp) {
         if (Math.abs(mypieceList.get(index)[0] - otherpieceList.get(i)[0]) <= 1) {
             if (methods.checkPosition(global_variant.Player1, mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1], board) & checker1) {
-                methods.movePiece(global_variant.Player1, board, mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1]);
+                tmp = methods.movePiece(global_variant.Player1, board, mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1]);
+                board = tmp;
                 pieces[global_variant.Player2 -1] = methods.pieceOnBoard(global_variant.Player2, board);
                 pieces[global_variant.Player1-1] = methods.pieceOnBoard(global_variant.Player1, board);
-                root.left = new TreeNode(pieces,mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1],board,root);
+                solveList.add(new TreeNode(pieces,mypieceList.get(index)[0], mypieceList.get(index)[1], mypieceList.get(index)[0], otherpieceList.get(i)[1],board,root));
                 checker1 = false;
+                board = board_cp;
             }
             
         }
         if (Math.abs(mypieceList.get(index)[1] - otherpieceList.get(i)[1]) == 1 ) {
             if (methods.checkPosition(global_variant.Player1, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1], board) & checker2) {
-                methods.movePiece(global_variant.Player1, board, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1]);
+                tmp = methods.movePiece(global_variant.Player1, board, mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1]);
+                board = tmp;
                 pieces[global_variant.Player2 -1] = methods.pieceOnBoard(global_variant.Player2, board);
                 pieces[global_variant.Player1-1] = methods.pieceOnBoard(global_variant.Player1, board);
-                root.right = new TreeNode(pieces,mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1],board,root);
+                solveList.add(new TreeNode(pieces,mypieceList.get(index)[0], mypieceList.get(index)[1], otherpieceList.get(i)[0],  mypieceList.get(index)[1],board,root));
                 checker2 = false;
+                board = board_cp;
             }
         }
         if (checker1 == false & checker2 == false) {
             break;
         }
     }
+}
     //a
+    
+    return solveList;
 }
 //a
+
+
+    static public TreeNode execDfs(TreeNode root) {
+        if (root == null) {
+            throw new IllegalArgumentException("Nothing to print because input tree is null.");
+        }
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        TreeNode max = root;
+        stack.addFirst(root);
+        for (int i =0;!stack.isEmpty()|| i == 0 ;i++) {
+            System.out.println("time:"+i);
+            TreeNode node = stack.pop();
+            if (node.val >= max.val ) {
+                max = node;
+            }
+            node.child = giveNode_Player(node.treenode_depth%2+1, node, node.board, node.pieces);
+            ArrayList<TreeNode> children = node.child;
+            for (TreeNode treeNode : children) {
+                stack.addFirst(treeNode);
+            }
+        }
+        while(max.treenode_depth > 1) 
+        {
+            System.out.println(max.treenode_depth);
+            max = max.parent;
+        }
+        return max;
+    }
+    static public TreeNode execBfs(TreeNode root) {
+        if (root == null) {
+            throw new IllegalArgumentException("Nothing to print because input tree is null.");
+        }
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        TreeNode max = root;
+        stack.addFirst(root);
+        for (int i =0;!stack.isEmpty() ;i++) {
+            System.out.println("time:"+i);
+            TreeNode node = stack.pop();
+            if (node.val >= max.val ) {
+                max = node;
+            }
+            node.child = giveNode_Player(node.treenode_depth%2+1, node, node.board, node.pieces);
+            ArrayList<TreeNode> children = node.child;
+            
+            for (TreeNode treeNode : children) {
+                stack.addLast(treeNode);
+            }
+                    
+                }
+        while(max.treenode_depth > 1) 
+        {
+            System.out.println(max.treenode_depth);
+            max = max.parent;
+        }
+        return max;
+    }
 }

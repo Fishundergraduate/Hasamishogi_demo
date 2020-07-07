@@ -51,8 +51,10 @@ public class MainActivity extends Mystate{
                 case global_variant.Player1:
                     
                     System.out.println("Player" + nowPlayer + "さんの手番です．");
-                    mystate.printBoard(mystate.board);                    
-                    movePiece(nowPlayer,mystate.board,scan);
+                    mystate.printBoard(mystate.board);   
+                    int[][] tmp = mystate.board;                 
+                    tmp = movePiece(nowPlayer,mystate.board,scan);
+                    mystate.board = tmp;
 
                     mystate.printBoard(mystate.board);
                     mystate.pieces[nowPlayer-1] = mystate.pieceOnBoard(nowPlayer, mystate.board);
@@ -70,7 +72,9 @@ public class MainActivity extends Mystate{
                         System.out.print(i+1+"\t");
                     }
                     System.out.println("");
-                    methods.movePiece(nowPlayer,mystate.board, solve[0],solve[1] , solve[2], solve[3]) ;//movePiece(int player, int[][] board,int x_1, int y_1,int x_2 , int y_2)
+                    int[][] tmp_2 = mystate.board; //todo
+                    tmp_2 = methods.movePiece(nowPlayer,mystate.board, solve[0],solve[1] , solve[2], solve[3]) ;//movePiece(int player, int[][] board,int x_1, int y_1,int x_2 , int y_2)
+                    mystate.board = tmp_2;
     
                     //mystate.printBoard(mystate.board);
                     mystate.pieces[nowPlayer-1] = mystate.pieceOnBoard(nowPlayer, mystate.board);
@@ -176,7 +180,7 @@ class Methods {
     }
 
     // do Players Turn
-    static void movePiece(int player, int[][] board,Scanner scan) {
+    static int[][] movePiece(int player, int[][] board,Scanner scan) {
         Methods methods = new Methods();
         int x_1 = 10, y_1 = 10; // Departure
         int x_2 = 10, y_2 = 10; // Destination
@@ -211,12 +215,16 @@ class Methods {
         // moving piece
         board[x_1-1][y_1-1] = 0;
         board[x_2-1][y_2-1] = player;
+        Mystate foo = new Mystate();
+        int[][] solver = foo.board;
 
-        methods.deletePiece(player, x_2-1 , y_2-1, board);
+        solver = methods.deletePiece(player, x_2-1 , y_2-1, board);
+
+        return solver;
 
     }
     //move Piece for AI
-    void movePiece(int player, int[][] board,int x_1, int y_1,int x_2 , int y_2) {
+    int[][] movePiece(int player, int[][] board,int x_1, int y_1,int x_2 , int y_2) {
         Methods methods = new Methods();
         //int x_1 = 10, y_1 = 10; // Departure
         //int x_2 = 10, y_2 = 10; // Destination
@@ -254,8 +262,11 @@ class Methods {
         */
         board[x_1][y_1] = 0;
         board[x_2][y_2] = player;
+        Mystate foo = new Mystate();
+        int[][] solver = foo.board;
 
-        methods.deletePiece(player, x_2 , y_2, board);
+        solver = methods.deletePiece(player, x_2 , y_2,board );
+        return solver;
 
     }
 
@@ -315,7 +326,7 @@ class Methods {
         return true;
     }
 
-    void deletePiece(int player, int x, int y, int[][] board) {
+    int[][] deletePiece(int player, int x, int y, int[][] board) {
         Methods methods = new Methods();
         int nowPlayer = 0;
         nowPlayer = player;
@@ -326,7 +337,8 @@ class Methods {
         takeDown( nowPlayer, otherPlayer, x, y, board);
         takeRight( nowPlayer, otherPlayer, x, y,board);
         takeLeft(nowPlayer, otherPlayer,x,y ,board);
-
+        
+        return board;
     }
     //置いた駒より上を探す
     void takeUp(int nowPlayer, int otherPlayer, int x, int y, int[][] board){
