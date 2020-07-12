@@ -1,3 +1,4 @@
+//import java.lang.FdLibm.Pow;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
@@ -6,6 +7,7 @@ import java.util.Random;
 //import sun.tools.tree.ThrowStatement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 
@@ -53,8 +55,8 @@ public class DFS {
         }
     }
 
-    public static int[] main(final int[] pieces) {
-        final int[][] board = global_variant.board;
+    public static int[] main(final int[][] board,final int[] pieces) {
+        //final int[][] board = global_variant.board;
         TreeNode root = new TreeNode(pieces,board);
         root.parent = new TreeNode(-130);
 
@@ -155,7 +157,10 @@ public class DFS {
 
 public  static ArrayList<TreeNode> giveNode_Player2(TreeNode root, int[][] board,int[] pieces){
     Methods methods = new Methods();
-    final int[][] board_cp = board;
+    int[][] board_cp = new int[9][9];
+    for (int i = 0; i < 9; i++) {
+        board_cp[i] = Arrays.copyOf(board[i],9);
+    }
     int[][] tmp;
     //methods.printBoard(board);
     
@@ -215,7 +220,11 @@ public  static ArrayList<TreeNode> giveNode_Player1(TreeNode root, int[][] board
     Boolean checker2 = true;
     ArrayList<TreeNode> solveList = new ArrayList<TreeNode>();
     int[][] tmp;
-    final int[][] board_cp = board;
+    int[][] board_cp = new int[9][9];
+    for (int i = 0; i < 9; i++) {
+        board_cp[i] = Arrays.copyOf(board[i],9);
+    }
+    
 
     //Random random = new Random();
     //int index = random.nextInt(mypieceList.size());
@@ -265,7 +274,7 @@ public  static ArrayList<TreeNode> giveNode_Player1(TreeNode root, int[][] board
         Deque<TreeNode> stack = new ArrayDeque<>();
         TreeNode max = root;
         stack.addFirst(root);
-        for (int i =0;!stack.isEmpty()|| i == 0 ;i++) {
+        for (int i =0;!stack.isEmpty()&&i <65355;i++) {
             System.out.println("time:"+i);
             TreeNode node = stack.pop();
             if (node.val >= max.val ) {
@@ -291,7 +300,7 @@ public  static ArrayList<TreeNode> giveNode_Player1(TreeNode root, int[][] board
         Deque<TreeNode> stack = new ArrayDeque<>();
         TreeNode max = root;
         stack.addFirst(root);
-        for (int i =0;!stack.isEmpty() ;i++) {
+        for (int i =0;!stack.isEmpty()&&i<65355 ;i++) {
             System.out.println("time:"+i);
             TreeNode node = stack.pop();
             if (node.val >= max.val ) {

@@ -1,5 +1,8 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
+
+//import sun.jvm.hotspot.utilities.IntArray;
 
 //https://khurata.hatenablog.com/entry/2019/04/04/081801
 class global_variant {
@@ -65,16 +68,17 @@ public class MainActivity extends Mystate{
 
                 case global_variant.Player2:
                     System.out.println("Player" + nowPlayer + "さんの手番です．");
-                    //mystate.printBoard(mystate.board);   
-                    global_variant.board = mystate.board; 
-                    int[] solve = DFS.main(mystate.pieces);
+                    //mystate.printBoard(mystate.board);
+                    int[][] tmp_board = new int[9][9];
+                    for (int i = 0; i < 9; i++) {
+                        tmp_board[i] = Arrays.copyOf(mystate.board[i],9);
+                    }
+                    int[] solve = DFS.main(tmp_board,mystate.pieces);
                     for (int i : solve) {
                         System.out.print(i+1+"\t");
                     }
                     System.out.println("");
-                    int[][] tmp_2 = mystate.board; //todo
-                    tmp_2 = methods.movePiece(nowPlayer,mystate.board, solve[0],solve[1] , solve[2], solve[3]) ;//movePiece(int player, int[][] board,int x_1, int y_1,int x_2 , int y_2)
-                    mystate.board = tmp_2;
+                    methods.movePiece(global_variant.Player2,mystate.board, solve[0],solve[1] , solve[2], solve[3]) ;//movePiece(int player, int[][] board,int x_1, int y_1,int x_2 , int y_2)
     
                     //mystate.printBoard(mystate.board);
                     mystate.pieces[nowPlayer-1] = mystate.pieceOnBoard(nowPlayer, mystate.board);
